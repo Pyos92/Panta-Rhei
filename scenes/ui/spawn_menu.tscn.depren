@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://kniluiw8wnxt"]
+
+[ext_resource type="Script" uid="uid://c018x0l34xquq" path="res://scenes/ui/spawn_menu.gd" id="1_g1y7k"]
+
+[node name="SpawnMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_g1y7k")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SpawnFlower" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Fiore"
+
+[node name="SpawnTree" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Albero"
+
+[node name="SpawnAnimal" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Animale"
