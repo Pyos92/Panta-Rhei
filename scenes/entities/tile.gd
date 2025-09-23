@@ -19,7 +19,7 @@ const SPRITE_TREE_4 ="res://assets/sprite/tree4.png"
 
 var type := CellType.EMPTY
 var sub_type := 0 #Per gli alberi serve a renderizzare gli altri quadratini
-var coords := Vector2.ZERO
+var coords := Vector2i.ZERO
 var next_step_action := CellNextStep.IDLE
 
 func _ready() -> void:

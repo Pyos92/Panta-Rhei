@@ -19,11 +19,11 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	pass
 	
-func stringify_Vector2(v : Vector2) -> String:
-	if v == Vector2.UP: return "UP"
-	if v == Vector2.DOWN: return "DOWN"
-	if v == Vector2.LEFT: return "LEFT"
-	if v == Vector2.RIGHT: return "RIGHT"
+func stringify_Vector2(v : Vector2i) -> String:
+	if v == Vector2i.UP: return "UP"
+	if v == Vector2i.DOWN: return "DOWN"
+	if v == Vector2i.LEFT: return "LEFT"
+	if v == Vector2i.RIGHT: return "RIGHT"
 	return "(%d, %d)" % [v.x, v.y]
 
 
@@ -56,8 +56,8 @@ class Notifications:
 		# Posiziona al centro dello schermo
 		var screen_size = GameManager.get_tree().get_root().get_viewport().get_visible_rect().size
 		var center_x = (screen_size.x - LABEL_W) / 2  # Centra i 400 pixel di larghezza
-		toast.position = Vector2(center_x, screen_size.y - LABEL_H)  # 150 pixel dal basso
-		toast.size = Vector2(400, LABEL_H)
+		toast.position = Vector2i(center_x, screen_size.y - LABEL_H)  # 150 pixel dal basso
+		toast.size = Vector2i(400, LABEL_H)
 
 		GameManager.get_tree().get_root().add_child(toast)
 

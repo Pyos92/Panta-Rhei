@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Panta Rhei"
-run/main_scene="uid://blq7tn4rolbaa"
+run/main_scene="uid://fnjmhy4b5oxb"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
 
