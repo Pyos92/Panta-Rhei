@@ -6,5 +6,5 @@ func _ready() -> void:
 	pressed.connect(on_pressed)
 
 func on_pressed() -> void:
-	GameManager.grid_manager.step()
+	GameManager.main.go_to_next_gen()
 	GameManager.ui.spawn_menu.visible = false

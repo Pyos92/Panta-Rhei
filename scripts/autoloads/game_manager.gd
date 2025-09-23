@@ -7,6 +7,7 @@ enum GameState{
 }
 var current_game_state : GameState = GameState.MANUAL
 var grid_manager : GridManager
+var main : Main
 var ui : UI
 
 signal debug_mode_switched
@@ -18,20 +19,33 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
-	
-func stringify_Vector2(v : Vector2i) -> String:
-	if v == Vector2i.UP: return "UP"
-	if v == Vector2i.DOWN: return "DOWN"
-	if v == Vector2i.LEFT: return "LEFT"
-	if v == Vector2i.RIGHT: return "RIGHT"
-	return "(%d, %d)" % [v.x, v.y]
-
 
 class Groups:
 	const FLOWER = "Flower"
 	const ANIMAL = "Animal"
 	const TREE = "Tree"
 	const TERRAIN = "Terrain"
+	
+class Coords:
+	static func to_toroidal(input_coords: Vector2i) -> Vector2i:
+		var toroidal := input_coords
+		if toroidal.x < 0: toroidal.x = GameManager.grid_manager.GRID_WIDTH -1
+		if toroidal.x > GameManager.grid_manager.GRID_WIDTH-1: toroidal.x = 0
+		if toroidal.y < 0: toroidal.y = GameManager.grid_manager.GRID_HEIGHT -1
+		if toroidal.y > GameManager.grid_manager.GRID_HEIGHT-1: toroidal.y = 0
+		return toroidal;
+		
+class Vectors:
+	static func stringify_Vector2(v : Vector2i) -> String:
+		if v == Vector2i.UP: return "UP"
+		if v == Vector2i.UP+Vector2i.LEFT: return "UP-LEFT"
+		if v == Vector2i.UP+Vector2i.RIGHT: return "UP-RIGHT"
+		if v == Vector2i.DOWN: return "DOWN"
+		if v == Vector2i.DOWN+Vector2i.LEFT: return "DOWN-LEFT"
+		if v == Vector2i.DOWN+Vector2i.RIGHT: return "DOWN-RIGHT"
+		if v == Vector2i.LEFT: return "LEFT"
+		if v == Vector2i.RIGHT: return "RIGHT"
+		return "(%d, %d)" % [v.x, v.y]
 
 class Notifications:
 

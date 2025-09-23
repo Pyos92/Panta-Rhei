@@ -27,14 +27,12 @@ var coords := Vector2i.ZERO:
 		coords = value
 		position = Vector2i(coords.x * CELL_SIZE, coords.y * CELL_SIZE)
 var next_step_action := CellNextStep.IDLE
+var life_rule : AbstractTileLifeRule = null
 
 func _ready() -> void:
-	sprite.texture = load(SPRITE_EMPTY)
+	clear_tile()
 	coords_label.text = str(int(coords.x)) + ", " + str(int(coords.y))
 	GameManager.debug_mode_switched.connect(func(): coords_label.visible = GameManager.debug_mode)
-	
-func _process(delta: float) -> void:
-	pass
 	
 func can_grow(growth_type : CellType) -> bool:
 	if next_step_action == Tile.CellNextStep.IDLE and is_empty():
@@ -56,11 +54,15 @@ func clear_tile():
 	type = CellType.EMPTY
 	sprite.texture = load(SPRITE_EMPTY)
 	next_step_action = CellNextStep.IDLE
+	life_rule = EmptyLifeRule.new(self)
+	_switch_group(GameManager.Groups.TERRAIN)
 	
 func spawn_flower():
 	type = CellType.FLOWER
 	sprite.texture = load(SPRITE_FLOWER)
 	next_step_action = CellNextStep.IDLE
+	life_rule = FlowerLifeRule.new(self)
+	_switch_group(GameManager.Groups.FLOWER)
 
 func spawn_tree():
 	type = CellType.TREE
@@ -70,6 +72,8 @@ func spawn_tree():
 	grid[coords.x][coords.y+1]._spawn_tree(3)
 	grid[coords.x+1][coords.y+1]._spawn_tree(4)
 	next_step_action = CellNextStep.IDLE
+	life_rule = TreeLifeRule.new(self)
+	_switch_group(GameManager.Groups.TREE)
 	
 func _spawn_tree(_sub_type : int):
 	type = CellType.TREE
@@ -86,6 +90,15 @@ func spawn_animal():
 	type = CellType.ANIMAL
 	sprite.texture = load(SPRITE_ANIMAL)
 	next_step_action = CellNextStep.IDLE
+	life_rule = AnimalLifeRule.new(self)
+	_switch_group(GameManager.Groups.ANIMAL)
+	
+func _switch_group(group : String):
+	remove_from_group(GameManager.Groups.TERRAIN)
+	remove_from_group(GameManager.Groups.FLOWER)
+	remove_from_group(GameManager.Groups.TREE)
+	remove_from_group(GameManager.Groups.ANIMAL)
+	add_to_group(group)
 	
 func is_empty() -> bool:
 	return type == CellType.EMPTY
@@ -98,4 +111,4 @@ func has_animal() -> bool:
 	
 func _to_string() -> String:
 	var str_type : String = CellType.keys()[type]
-	return str_type + "   " + GameManager.stringify_Vector2(coords) 
+	return str_type + "   " + GameManager.Vectors.stringify_Vector2(coords) 
