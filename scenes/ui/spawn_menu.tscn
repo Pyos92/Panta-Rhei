@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://kniluiw8wnxt"]
 
-[ext_resource type="Script" uid="uid://c018x0l34xquq" path="res://spawn_menu.gd" id="1_g1y7k"]
+[ext_resource type="Script" uid="uid://c018x0l34xquq" path="res://scenes/ui/spawn_menu.gd" id="1_g1y7k"]
 
 [node name="SpawnMenu" type="Control"]
 layout_mode = 3
