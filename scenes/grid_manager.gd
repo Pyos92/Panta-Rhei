@@ -2,47 +2,57 @@ extends Node2D
 class_name GridManager
 
 # Dimensioni griglia
-const GRID_WIDTH = 100
-const GRID_HEIGHT = 100
-const CELL_SIZE = 32  # Dimensione in pixel di ogni cella
+const GRID_WIDTH        = 100
+const GRID_HEIGHT       = 100
+const TILE: PackedScene = preload("uid://kbh15wp6fe5k")
+var grid: Array[Array]  = []
 
-const TILE : PackedScene = preload("uid://kbh15wp6fe5k")
-
-var grid: Array[Array] = []
 
 func _ready():
 	GameManager.grid_manager = self
 	generate_grid()
 
+
 func generate_grid():
 	for x in range(GRID_WIDTH):
 		var column: Array[Node2D] = []
 		for y in range(GRID_HEIGHT):
-			var terrain_sprite : Tile = TILE.instantiate()
-			terrain_sprite.coords = Vector2i(x,y)
-			terrain_sprite.position = Vector2i(x * CELL_SIZE, y * CELL_SIZE)
-			add_child(terrain_sprite)
-			column.append(terrain_sprite)
-		
+			var new_tile: Tile = TILE.instantiate()
+			new_tile.coords = Vector2i(x, y)
+			add_child(new_tile)
+			column.append(new_tile)
+
 		grid.append(column)
 
+
 func count_neighbors(tile: Tile) -> int:
-	var cnt = 0
-	var directions : Array[Vector2i] = [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]
+	var cnt                         = 0
+	var directions: Array[Vector2i] = [
+									  Vector2i.UP+Vector2i.LEFT,
+									  Vector2i.UP,
+									  Vector2i.UP+Vector2i.RIGHT,
+									  Vector2i.LEFT,
+									  Vector2i.RIGHT,
+									  Vector2i.DOWN+Vector2i.LEFT,
+									  Vector2i.DOWN,
+									  Vector2i.DOWN+Vector2i.RIGHT
+									  ]
 	for direction in directions:
-		var toroidal_coords : Vector2i = _toroidal_coords(tile.coords + direction)
+		var toroidal_coords: Vector2i = _toroidal_coords(tile.coords + direction)
 		print(GameManager.stringify_Vector2(direction)+": "+str(grid[toroidal_coords.x][toroidal_coords.y]))
 		if tile.type == grid[toroidal_coords.x][toroidal_coords.y].type:
 			cnt += 1
 	return cnt
-	
-func _toroidal_coords(input_coords : Vector2i) -> Vector2i:
+
+
+func _toroidal_coords(input_coords: Vector2i) -> Vector2i:
 	var toroidal := input_coords
 	if toroidal.x < 0: toroidal.x = GRID_WIDTH -1
 	if toroidal.x > GRID_WIDTH-1: toroidal.x = 0
 	if toroidal.y < 0: toroidal.y = GRID_HEIGHT -1
 	if toroidal.y > GRID_HEIGHT-1: toroidal.y = 0
 	return toroidal;
+
 
 func step() -> void:
 	for y in range(GRID_HEIGHT):
@@ -52,19 +62,19 @@ func step() -> void:
 			print("Conto vicini a " +str(x)+","+str(y))
 			var n = count_neighbors(grid[x][y])
 			if (grid[x][y].has_flower()):
-				if n in [2,3]:
+				if n in [2, 3]:
 					#Se ci sono 2 fiori vicini -> fai proliferare altri fiori se non ci sono già altri ordini
-					var my_lambda = func(coords : Vector2i, cell_type : Tile.CellType):
-						if(grid[coords.x][coords.y].can_grow(cell_type)): 
+					var my_lambda = func(coords: Vector2i, cell_type: Tile.CellType):
+						if(grid[coords.x][coords.y].can_grow(cell_type)):
 							grid[coords.x][coords.y].next_step_action = Tile.CellNextStep.GROW
-					var coords : Vector2i = Vector2i(x,y)
+					var coords: Vector2i = Vector2i(x, y)
 					my_lambda.call(_toroidal_coords(coords + Vector2i.UP), Tile.CellType.FLOWER)
 					my_lambda.call(_toroidal_coords(coords + Vector2i.LEFT), Tile.CellType.FLOWER)
 					my_lambda.call(_toroidal_coords(coords + Vector2i.RIGHT), Tile.CellType.FLOWER)
 					my_lambda.call(_toroidal_coords(coords + Vector2i.DOWN), Tile.CellType.FLOWER)
 				else:
 					grid[x][y].next_step_action = Tile.CellNextStep.DIE
-						
+
 			print("-------")
 
 	for y in range(GRID_HEIGHT):
@@ -73,15 +83,16 @@ func step() -> void:
 				Tile.CellNextStep.DIE: grid[x][y].clear_tile()
 				Tile.CellNextStep.GROW: grid[x][y].grow(Tile.CellType.FLOWER)
 
+
 func move_animals(grid: Array, animals: Array, width: int, height: int) -> Array:
 	var new_positions = []
 	for pos in animals:
-		var x = pos[0]
-		var y = pos[1]
-		var directions = [[0,1],[1,0],[0,-1],[-1,0]]
-		var choice = directions[randi() % directions.size()]
-		var nx = x + choice[0]
-		var ny = y + choice[1]
+		var x          = pos[0]
+		var y          = pos[1]
+		var directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]
+		var choice     = directions[randi() % directions.size()]
+		var nx         = x + choice[0]
+		var ny         = y + choice[1]
 		if nx >= 0 and nx < width and ny >= 0 and ny < height and !grid[ny][nx].has_tree():
 			grid[x][y].spawn_flower()
 			grid[ny][nx].spawn_animal()
@@ -89,6 +100,7 @@ func move_animals(grid: Array, animals: Array, width: int, height: int) -> Array
 		else:
 			new_positions.append([x, y])
 	return new_positions
+
 
 func apply_flowers_trees_animals(grid: Array, animals: Array) -> void:
 	var h = grid.size()
@@ -98,11 +110,11 @@ func apply_flowers_trees_animals(grid: Array, animals: Array) -> void:
 	for y in range(h-3):
 		for x in range(w-3):
 			var pattern = [
-				[0, 1, 1, 0],
-				[1, 0, 0, 1],
-				[1, 0, 0, 1],
-				[0, 1, 1, 0]
-			]
+							  [0, 1, 1, 0],
+							  [1, 0, 0, 1],
+							  [1, 0, 0, 1],
+							  [0, 1, 1, 0]
+						  ]
 			var matches = true
 			for dy in range(4):
 				for dx in range(4):
@@ -127,8 +139,8 @@ func apply_flowers_trees_animals(grid: Array, animals: Array) -> void:
 			var x2 = tree_blocks[j][0]
 			var y2 = tree_blocks[j][1]
 			if abs(x1-x2) <= 3 and abs(y1-y2) <= 3:
-				if [x1,y1] not in to_kill:
-					to_kill.append([x1,y1])
+				if [x1, y1] not in to_kill:
+													to_kill.append([x1,y1])
 				if [x2,y2] not in to_kill:
 					to_kill.append([x2,y2])
 

@@ -19,8 +19,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				return
 			
 			var cell : Tile = results[0].collider
-			spawn_menu.set_cell(cell)
-			spawn_menu.position = cell.global_position
-			spawn_menu.visible = true
+			if cell.is_empty():
+				spawn_menu.set_cell(cell)
+				spawn_menu.position = cell.global_position
+				spawn_menu.visible = true
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			spawn_menu.visible = false

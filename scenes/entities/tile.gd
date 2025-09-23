@@ -5,7 +5,7 @@ extends StaticBody2D
 @onready var coords_label: Label = %Coords
 
 enum CellType {EMPTY, FLOWER, TREE, ANIMAL}
-enum CellNextStep {IDLE, THRIVE, GROW, DIE}
+enum CellNextStep {IDLE, LIVE, GROW, DIE}
 
 # Scena del terreno da istanziare
 const SPRITE_EMPTY = "res://assets/sprite/grass-tile.png"
@@ -17,9 +17,15 @@ const SPRITE_TREE_2 ="res://assets/sprite/tree2.png"
 const SPRITE_TREE_3 ="res://assets/sprite/tree3.png"
 const SPRITE_TREE_4 ="res://assets/sprite/tree4.png"
 
+const CELL_SIZE = 32
+
 var type := CellType.EMPTY
 var sub_type := 0 #Per gli alberi serve a renderizzare gli altri quadratini
-var coords := Vector2i.ZERO
+var coords := Vector2i.ZERO:
+	get: return coords
+	set(value): 
+		coords = value
+		position = Vector2i(coords.x * CELL_SIZE, coords.y * CELL_SIZE)
 var next_step_action := CellNextStep.IDLE
 
 func _ready() -> void:
