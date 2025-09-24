@@ -2,8 +2,8 @@ extends Node2D
 class_name GridManager
 
 # Dimensioni griglia
-const GRID_WIDTH        = 100
-const GRID_HEIGHT       = 100
+@export var GRID_WIDTH        = 100
+@export var GRID_HEIGHT       = 100
 const TILE: PackedScene = preload("uid://kbh15wp6fe5k")
 var grid: Array[Array]  = []
 

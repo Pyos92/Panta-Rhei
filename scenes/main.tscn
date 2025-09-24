@@ -10,6 +10,8 @@
 script = ExtResource("1_vcsgt")
 
 [node name="GridManager" parent="." instance=ExtResource("2_c01mt")]
+GRID_WIDTH = 40
+GRID_HEIGHT = 40
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
