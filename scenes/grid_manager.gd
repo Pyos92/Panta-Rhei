@@ -22,3 +22,6 @@ func generate_grid():
 			column.append(new_tile)
 
 		grid.append(column)
+	
+func get_tile(coords : Vector2i) -> Tile:
+	return grid[coords.x][coords.y]
