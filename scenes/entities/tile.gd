@@ -4,7 +4,7 @@ extends StaticBody2D
 @onready var sprite: Sprite2D = %Sprite
 @onready var coords_label: Label = %Coords
 
-enum CellType {EMPTY, FLOWER, TREE, ANIMAL}
+enum CellType {EMPTY = 0, FLOWER = 1, TREE = 5, ANIMAL = 10}
 enum CellNextStep {IDLE, LIVE, GROW_FLOWER, GROW_TREE, GROW_ANIMAL, DIE}
 
 # Scena del terreno da istanziare
@@ -28,6 +28,7 @@ var coords := Vector2i.ZERO:
 		position = Vector2i(coords.x * CELL_SIZE, coords.y * CELL_SIZE)
 var next_step_action := CellNextStep.IDLE
 var life_rule : AbstractTileLifeRule = null
+var root_tile : Tile = null
 
 func _ready() -> void:
 	clear_tile()
@@ -48,13 +49,13 @@ func clear_tile():
 func clear_tree():
 	type = CellType.EMPTY
 	clear_tile()
-	var t2 : Tile = GameManager.grid_manager.get_tile(coords+Vector2i.RIGHT)
+	var t2 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)
 	t2.type = CellType.EMPTY
 	t2.clear_tile()
-	var t3 : Tile = GameManager.grid_manager.get_tile(coords+Vector2i.DOWN)
+	var t3 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)
 	t3.type = CellType.EMPTY
 	t3.clear_tile()
-	var t4 : Tile = GameManager.grid_manager.get_tile(coords+Vector2i.DOWN+Vector2i.RIGHT)
+	var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
 	t4.type = CellType.EMPTY
 	t4.clear_tile()
 	
@@ -66,23 +67,22 @@ func spawn_flower():
 	_switch_group(GameManager.Groups.FLOWER)
 
 func spawn_tree():
-	type = CellType.TREE
-	_spawn_tree(1)
-	GameManager.grid_manager.get_tile(coords+Vector2i.RIGHT)._spawn_tree(2)
-	GameManager.grid_manager.get_tile(coords+Vector2i.DOWN)._spawn_tree(3)
-	GameManager.grid_manager.get_tile(coords+Vector2i.DOWN+Vector2i.RIGHT)._spawn_tree(4)
+	_spawn_tree(self, 1)
+	GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)._spawn_tree(self, 2)
+	GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)._spawn_tree(self, 3)
+	GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)._spawn_tree(self, 4)
 	next_step_action = CellNextStep.IDLE
 	life_rule = TreeLifeRule.new(self)
 	_switch_group(GameManager.Groups.TREE)
 	
-func _spawn_tree(_sub_type : int):
+func _spawn_tree(root_tile : Tile, _sub_type : int):
 	type = CellType.TREE
 	self.sub_type = _sub_type
 	match sub_type:
 		1: sprite.texture = load(SPRITE_TREE_1)
-		2: sprite.texture = load(SPRITE_TREE_2)
-		3: sprite.texture = load(SPRITE_TREE_3)
-		4: sprite.texture = load(SPRITE_TREE_4)
+		2: sprite.texture = load(SPRITE_TREE_2); self.root_tile = root_tile
+		3: sprite.texture = load(SPRITE_TREE_3); self.root_tile = root_tile
+		4: sprite.texture = load(SPRITE_TREE_4); self.root_tile = root_tile
 		_: sprite.texture = load(SPRITE_TREE)
 	next_step_action = CellNextStep.IDLE
 	

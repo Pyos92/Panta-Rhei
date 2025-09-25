@@ -1,19 +1,11 @@
 @abstract
-class_name AbstractTileLifeRule extends Resource
+class_name AbstractTileLifeRule
 
-const PROXIMITY_SEARCH_AREA: Array[Vector2i] = [
-	Vector2i.UP+Vector2i.LEFT,
-	Vector2i.UP,
-	Vector2i.UP+Vector2i.RIGHT,
-	Vector2i.LEFT,
-	Vector2i.RIGHT,
-	Vector2i.DOWN+Vector2i.LEFT,
-	Vector2i.DOWN,
-	Vector2i.DOWN+Vector2i.RIGHT
-]
+static var PROXIMITY_SEARCH_AREA = build_area(3,3)
 
 var tile: Tile
 
+@warning_ignore("shadowed_variable")
 func _init(tile: Tile) -> void:
 	self.tile = tile
 	
@@ -29,12 +21,11 @@ func apply_next_gen() -> void:
 
 func get_tiles_in_area(area : Array[Vector2i], type_filter = null) -> Array[Tile]:
 	var tiles : Array[Tile] = []
-	var grid : Array[Array] = GameManager.grid_manager.grid
+	var grid_manager : GridManager = GameManager.grid_manager
 	
 	for point in area:
-		var toroidal_coords: Vector2i = GameManager.Coords.to_toroidal(tile.coords + point)
-		if (type_filter == null) or (type_filter != null and type_filter == grid[toroidal_coords.x][toroidal_coords.y].type):
-			tiles.append(grid[toroidal_coords.x][toroidal_coords.y])
+		if (type_filter == null) or (type_filter != null and type_filter == grid_manager.get_tile_at(tile.coords, point).type):
+			tiles.append(grid_manager.get_tile_at(tile.coords, point))
 	
 	var debug := false
 	if debug and !tiles.is_empty():
@@ -43,3 +34,39 @@ func get_tiles_in_area(area : Array[Vector2i], type_filter = null) -> Array[Tile
 			print(str(n_tile))
 		print("-------")
 	return tiles
+	
+
+func count_life_elements_in_area(area : Array[Vector2i]) -> int:
+	var tiles : Array[Tile] = get_tiles_in_area(area, null)
+	var count = 0
+	for t in tiles:
+		count += t.type
+	return count
+
+
+#Crea un area date le dimensioni dei 2 lati e presupponendo che il cercatore sia al centro
+#Nel caso l'area sia pari si applica un offset di -1
+static func build_area(area_width : int, area_height : int) -> Array[Vector2i]:
+	@warning_ignore("integer_division")
+	var radius_x := floori(area_width / 2)
+	var offset_x = (area_width % 2) -1
+	@warning_ignore("integer_division")
+	var radius_y := floori(area_height / 2)
+	var offset_y = (area_height % 2) -1
+	var search_area: Array[Vector2i] = []
+	for y in range(-(radius_y + offset_y), (radius_y) + 1, 1):
+		for x in range(-(radius_x + offset_x), (radius_x) + 1 , 1):
+			var point := Vector2i(x,y)
+			if point == Vector2i.ZERO: continue
+			if offset_x == -1 and (point == Vector2i.RIGHT): continue
+			if offset_y == -1 and (point == Vector2i.DOWN or point == Vector2i.RIGHT+ Vector2i.DOWN): continue
+			search_area.append(point)
+			
+	return search_area
+
+func _has_space_for_tree() -> bool:
+	var grid_manager : GridManager = GameManager.grid_manager
+	if !grid_manager.get_tile_at(tile.coords, Vector2i.RIGHT).is_empty(): return false
+	if !grid_manager.get_tile_at(tile.coords, Vector2i.DOWN).is_empty(): return false
+	if !grid_manager.get_tile_at(tile.coords, Vector2i.DOWN + Vector2i.RIGHT).is_empty(): return false
+	return true

@@ -23,5 +23,6 @@ func generate_grid():
 
 		grid.append(column)
 	
-func get_tile(coords : Vector2i) -> Tile:
-	return grid[coords.x][coords.y]
+func get_tile_at(coords : Vector2i, offset = Vector2i.ZERO) -> Tile:
+	var toroidal_coords: Vector2i = GameManager.Coords.to_toroidal(coords+offset)
+	return grid[toroidal_coords.x][toroidal_coords.y]
