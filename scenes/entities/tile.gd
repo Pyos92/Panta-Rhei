@@ -5,7 +5,7 @@ extends StaticBody2D
 @onready var coords_label: Label = %Coords
 
 enum CellType {EMPTY = 0, FLOWER = 1, TREE = 5, ANIMAL = 10}
-enum CellNextStep {IDLE, LIVE, GROW_FLOWER, GROW_TREE, GROW_ANIMAL, DIE}
+enum CellNextStep {IDLE, LIVE, GROW_FLOWER, GROW_TREE, GROW_TREE_BRANCHES, GROW_ANIMAL, DIE}
 
 # Scena del terreno da istanziare
 const SPRITE_EMPTY = "res://assets/sprite/grass-tile.png"
@@ -99,6 +99,20 @@ func _switch_group(group : String):
 	remove_from_group(GameManager.Groups.TREE)
 	remove_from_group(GameManager.Groups.ANIMAL)
 	add_to_group(group)
+	
+func set_next_step_action(action : CellNextStep):
+	next_step_action = action
+	if type == CellType.TREE:
+		var t2 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)
+		var t3 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)
+		var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
+		if next_step_action == CellNextStep.GROW_TREE: next_step_action = CellNextStep.GROW_TREE_BRANCHES
+		#Propaga le azioni di vita, morte e crescita
+		if next_step_action in [CellNextStep.IDLE,CellNextStep.LIVE,CellNextStep.GROW_TREE_BRANCHES,CellNextStep.DIE]:
+			t2.next_step_action = next_step_action
+			t3.next_step_action = next_step_action
+			t4.next_step_action = next_step_action
+				
 	
 func is_empty() -> bool:
 	return type == CellType.EMPTY

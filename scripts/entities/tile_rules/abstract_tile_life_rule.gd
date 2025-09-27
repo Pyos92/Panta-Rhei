@@ -24,8 +24,13 @@ func get_tiles_in_area(area : Array[Vector2i], type_filter = null) -> Array[Tile
 	var grid_manager : GridManager = GameManager.grid_manager
 	
 	for point in area:
-		if (type_filter == null) or (type_filter != null and type_filter == grid_manager.get_tile_at(tile.coords, point).type):
-			tiles.append(grid_manager.get_tile_at(tile.coords, point))
+		var _tile : Tile = grid_manager.get_tile_at(tile.coords, point)
+		if (type_filter == null) or (type_filter != null and type_filter == _tile.type):
+			if _tile.root_tile != null:
+				_tile = _tile.root_tile
+			if tiles.has(_tile):
+				continue
+			tiles.append(_tile)
 	
 	var debug := false
 	if debug and !tiles.is_empty():
@@ -64,9 +69,12 @@ static func build_area(area_width : int, area_height : int) -> Array[Vector2i]:
 			
 	return search_area
 
-func _has_space_for_tree() -> bool:
+func _has_space_to_grow_tree() -> bool:
 	var grid_manager : GridManager = GameManager.grid_manager
-	if !grid_manager.get_tile_at(tile.coords, Vector2i.RIGHT).is_empty(): return false
-	if !grid_manager.get_tile_at(tile.coords, Vector2i.DOWN).is_empty(): return false
-	if !grid_manager.get_tile_at(tile.coords, Vector2i.DOWN + Vector2i.RIGHT).is_empty(): return false
+	var tile_right : Tile = grid_manager.get_tile_at(tile.coords, Vector2i.RIGHT)
+	var tile_down : Tile = grid_manager.get_tile_at(tile.coords, Vector2i.DOWN)
+	var tile_down_right : Tile = grid_manager.get_tile_at(tile.coords, Vector2i.DOWN + Vector2i.RIGHT)
+	if !tile_right.is_empty() or tile_right.next_step_action != Tile.CellNextStep.IDLE: return false
+	if !tile_down.is_empty() or tile_down.next_step_action != Tile.CellNextStep.IDLE: return false
+	if !tile_down_right.is_empty() or tile_down_right.next_step_action != Tile.CellNextStep.IDLE: return false
 	return true
