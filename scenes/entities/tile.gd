@@ -27,7 +27,6 @@ var coords := Vector2i.ZERO:
 		coords = value
 		position = Vector2i(coords.x * CELL_SIZE, coords.y * CELL_SIZE)
 var next_step_action := CellNextStep.IDLE
-var life_rule : AbstractTileLifeRule = null
 var root_tile : Tile = null
 
 func _ready() -> void:
@@ -42,8 +41,6 @@ func clear_tile():
 		type = CellType.EMPTY
 		sprite.texture = load(SPRITE_EMPTY)
 		next_step_action = CellNextStep.IDLE
-		life_rule = EmptyLifeRule.new(self)
-		_switch_group(GameManager.Groups.TERRAIN)
 	
 #Va chiamato sempre e solo sulla tile principale
 func clear_tree():
@@ -63,8 +60,6 @@ func spawn_flower():
 	type = CellType.FLOWER
 	sprite.texture = load(SPRITE_FLOWER)
 	next_step_action = CellNextStep.IDLE
-	life_rule = FlowerLifeRule.new(self)
-	_switch_group(GameManager.Groups.FLOWER)
 
 func spawn_tree():
 	_spawn_tree(self, 1)
@@ -72,8 +67,6 @@ func spawn_tree():
 	GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)._spawn_tree(self, 3)
 	GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)._spawn_tree(self, 4)
 	next_step_action = CellNextStep.IDLE
-	life_rule = TreeLifeRule.new(self)
-	_switch_group(GameManager.Groups.TREE)
 	
 func _spawn_tree(root_tile : Tile, _sub_type : int):
 	type = CellType.TREE
@@ -90,15 +83,6 @@ func spawn_animal():
 	type = CellType.ANIMAL
 	sprite.texture = load(SPRITE_ANIMAL)
 	next_step_action = CellNextStep.IDLE
-	life_rule = AnimalLifeRule.new(self)
-	_switch_group(GameManager.Groups.ANIMAL)
-	
-func _switch_group(group : String):
-	remove_from_group(GameManager.Groups.TERRAIN)
-	remove_from_group(GameManager.Groups.FLOWER)
-	remove_from_group(GameManager.Groups.TREE)
-	remove_from_group(GameManager.Groups.ANIMAL)
-	add_to_group(group)
 	
 func set_next_step_action(action : CellNextStep):
 	next_step_action = action

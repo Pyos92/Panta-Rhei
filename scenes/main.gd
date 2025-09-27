@@ -41,18 +41,15 @@ func go_to_next_gen() -> void:
 	_apply_next_gen_to_tiles(Tile.CellType.EMPTY)
 		
 func _evaluate_tiles(type : Tile.CellType) -> void:
-	for tile in get_tree().get_nodes_in_group(_type_to_group(type)):
-		tile.life_rule.evaluate_next_gen()
+	for y in range(0, GameManager.grid_manager.GRID_HEIGHT):
+		for x in range(0, GameManager.grid_manager.GRID_WIDTH):
+			var tile : Tile = GameManager.grid_manager.get_tile_at(Vector2i(x, y))
+			if tile.type == type:
+				LifecycleManager.evaluate_next_gen(tile)
 		
 func _apply_next_gen_to_tiles(type : Tile.CellType) -> void:
-	for tile in get_tree().get_nodes_in_group(_type_to_group(type)):
-		tile.life_rule.apply_next_gen()
-		
-func _type_to_group(type : Tile.CellType) -> String:
-	var group = null
-	match type:
-		Tile.CellType.EMPTY: group = GameManager.Groups.TERRAIN
-		Tile.CellType.FLOWER: group = GameManager.Groups.FLOWER
-		Tile.CellType.TREE: group = GameManager.Groups.TREE
-		Tile.CellType.ANIMAL: group = GameManager.Groups.ANIMAL
-	return group;
+	for y in range(0, GameManager.grid_manager.GRID_HEIGHT):
+		for x in range(0, GameManager.grid_manager.GRID_WIDTH):
+			var tile : Tile = GameManager.grid_manager.get_tile_at(Vector2i(x, y))
+			if tile.type == type:
+				LifecycleManager.apply_next_gen(tile)

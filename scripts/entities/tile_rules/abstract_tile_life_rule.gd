@@ -2,29 +2,23 @@
 class_name AbstractTileLifeRule
 
 static var PROXIMITY_SEARCH_AREA = build_area(3,3)
-
-var tile: Tile
-
-@warning_ignore("shadowed_variable")
-func _init(tile: Tile) -> void:
-	self.tile = tile
 	
 @abstract
-func evaluate_next_gen() -> void
+func evaluate_next_gen(tile_to_evaluate: Tile) -> void
 
-func apply_next_gen() -> void:
-	match tile.next_step_action:
-		Tile.CellNextStep.DIE: tile.clear_tile()
-		Tile.CellNextStep.GROW_FLOWER: tile.spawn_flower()
-		Tile.CellNextStep.GROW_TREE: tile.spawn_tree()
-		Tile.CellNextStep.GROW_ANIMAL: tile.spawn_animal()
+func apply_next_gen(tile_to_apply: Tile) -> void:
+	match tile_to_apply.next_step_action:
+		Tile.CellNextStep.DIE: tile_to_apply.clear_tile()
+		Tile.CellNextStep.GROW_FLOWER: tile_to_apply.spawn_flower()
+		Tile.CellNextStep.GROW_TREE: tile_to_apply.spawn_tree()
+		Tile.CellNextStep.GROW_ANIMAL: tile_to_apply.spawn_animal()
 
-func get_tiles_in_area(area : Array[Vector2i], type_filter = null) -> Array[Tile]:
+func get_tiles_in_area(current_tile : Tile, area : Array[Vector2i], type_filter = null) -> Array[Tile]:
 	var tiles : Array[Tile] = []
 	var grid_manager : GridManager = GameManager.grid_manager
 	
 	for point in area:
-		var _tile : Tile = grid_manager.get_tile_at(tile.coords, point)
+		var _tile : Tile = grid_manager.get_tile_at(current_tile.coords, point)
 		if (type_filter == null) or (type_filter != null and type_filter == _tile.type):
 			if _tile.root_tile != null:
 				_tile = _tile.root_tile
@@ -34,15 +28,15 @@ func get_tiles_in_area(area : Array[Vector2i], type_filter = null) -> Array[Tile
 	
 	var debug := false
 	if debug and !tiles.is_empty():
-		print(str(tile) + " ha vicino:")
+		print(str(current_tile) + " ha vicino:")
 		for n_tile in tiles:
 			print(str(n_tile))
 		print("-------")
 	return tiles
 	
 
-func count_life_elements_in_area(area : Array[Vector2i]) -> int:
-	var tiles : Array[Tile] = get_tiles_in_area(area, null)
+func count_life_elements_in_area(current_tile : Tile, area : Array[Vector2i]) -> int:
+	var tiles : Array[Tile] = get_tiles_in_area(current_tile,area, null)
 	var count = 0
 	for t in tiles:
 		count += t.type
@@ -69,11 +63,12 @@ static func build_area(area_width : int, area_height : int) -> Array[Vector2i]:
 			
 	return search_area
 
-func _has_space_to_grow_tree() -> bool:
+func _has_space_to_grow_tree(current_tile : Tile) -> bool:
 	var grid_manager : GridManager = GameManager.grid_manager
-	var tile_right : Tile = grid_manager.get_tile_at(tile.coords, Vector2i.RIGHT)
-	var tile_down : Tile = grid_manager.get_tile_at(tile.coords, Vector2i.DOWN)
-	var tile_down_right : Tile = grid_manager.get_tile_at(tile.coords, Vector2i.DOWN + Vector2i.RIGHT)
+	var tile_right : Tile = grid_manager.get_tile_at(current_tile.coords, Vector2i.RIGHT)
+	var tile_down : Tile = grid_manager.get_tile_at(current_tile.coords, Vector2i.DOWN)
+	var tile_down_right : Tile = grid_manager.get_tile_at(current_tile.coords, Vector2i.DOWN + Vector2i.RIGHT)
+	if !current_tile.is_empty() or current_tile.next_step_action != Tile.CellNextStep.IDLE: return false
 	if !tile_right.is_empty() or tile_right.next_step_action != Tile.CellNextStep.IDLE: return false
 	if !tile_down.is_empty() or tile_down.next_step_action != Tile.CellNextStep.IDLE: return false
 	if !tile_down_right.is_empty() or tile_down_right.next_step_action != Tile.CellNextStep.IDLE: return false

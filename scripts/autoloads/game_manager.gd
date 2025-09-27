@@ -19,12 +19,6 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	pass
-
-class Groups:
-	const FLOWER = "Flower"
-	const ANIMAL = "Animal"
-	const TREE = "Tree"
-	const TERRAIN = "Terrain"
 	
 class Coords:
 	static func to_toroidal(input_coords: Vector2i) -> Vector2i:
