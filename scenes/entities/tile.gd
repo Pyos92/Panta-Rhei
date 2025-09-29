@@ -35,7 +35,8 @@ func _ready() -> void:
 	GameManager.debug_mode_switched.connect(func(): coords_label.visible = GameManager.debug_mode)
 	
 func clear_tile():
-	_update_global_count(type, CellType.EMPTY)
+	if root_tile == null:
+		_update_global_count(type, CellType.EMPTY)
 	for branch_tile in branch_tiles:
 		branch_tile.clear_tile()
 	type = CellType.EMPTY
@@ -83,11 +84,35 @@ func spawn_animal():
 	
 func set_next_step_action(action : CellNextStep):
 	next_step_action = action
+	# Se non ho ancora spawnato un albero, non ho branch tiles
 	for branch_tile in branch_tiles:
-		if next_step_action in [CellNextStep.GROW_TREE]:
-			branch_tile.next_step_action = CellNextStep.GROW_TREE_BRANCHES
-		elif next_step_action in [CellNextStep.IDLE, CellNextStep.LIVE, CellNextStep.DIE]:
+		if next_step_action in [CellNextStep.IDLE, CellNextStep.LIVE, CellNextStep.DIE]:
 			branch_tile.next_step_action = next_step_action
+
+	if next_step_action in [CellNextStep.GROW_TREE]:
+		var t2 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)
+		t2.next_step_action=CellNextStep.GROW_TREE_BRANCHES
+		var t3 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)
+		t3.next_step_action=CellNextStep.GROW_TREE_BRANCHES
+		var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
+		t4.next_step_action=CellNextStep.GROW_TREE_BRANCHES
+			
+func show_next_step_action() -> void:
+	match next_step_action:
+		Tile.CellNextStep.DIE:
+			sprite.modulate = Color.RED
+		Tile.CellNextStep.GROW_TREE:
+			sprite.modulate = Color.GREEN
+		Tile.CellNextStep.GROW_TREE_BRANCHES:
+			sprite.modulate = Color.GREEN
+		Tile.CellNextStep.GROW_FLOWER:
+			sprite.modulate = Color.GOLDENROD
+		Tile.CellNextStep.GROW_ANIMAL:
+			sprite.modulate = Color.PURPLE
+		_:
+			sprite.modulate = Color.WHITE
+	for branch_tile in branch_tiles:
+		branch_tile.sprite.modulate = sprite.modulate
 		
 func is_empty() -> bool:
 	return type == CellType.EMPTY

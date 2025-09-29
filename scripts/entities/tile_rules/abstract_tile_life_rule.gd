@@ -26,6 +26,8 @@ func get_tiles_in_area(current_tile : Tile, area : Array[Vector2i], type_filter 
 		if (type_filter == null) or (type_filter != null and type_filter == _tile.type):
 			if _tile.root_tile != null:
 				_tile = _tile.root_tile
+			if _tile == current_tile:
+				continue
 			if tiles.has(_tile):
 				continue
 			tiles.append(_tile)
@@ -72,8 +74,8 @@ func _has_space_to_grow_tree(current_tile : Tile) -> bool:
 	var tile_right : Tile = grid_manager.get_tile_at(current_tile.coords, Vector2i.RIGHT)
 	var tile_down : Tile = grid_manager.get_tile_at(current_tile.coords, Vector2i.DOWN)
 	var tile_down_right : Tile = grid_manager.get_tile_at(current_tile.coords, Vector2i.DOWN + Vector2i.RIGHT)
-	if !current_tile.is_empty() or current_tile.next_step_action != Tile.CellNextStep.IDLE: return false
-	if !tile_right.is_empty() or tile_right.next_step_action != Tile.CellNextStep.IDLE: return false
-	if !tile_down.is_empty() or tile_down.next_step_action != Tile.CellNextStep.IDLE: return false
-	if !tile_down_right.is_empty() or tile_down_right.next_step_action != Tile.CellNextStep.IDLE: return false
+	if !current_tile.is_empty() or current_tile.next_step_action not in [Tile.CellNextStep.IDLE, Tile.CellNextStep.GROW_TREE_BRANCHES]: return false
+	if !tile_right.is_empty() or tile_right.next_step_action not in [Tile.CellNextStep.IDLE, Tile.CellNextStep.GROW_TREE_BRANCHES]: return false
+	if !tile_down.is_empty() or tile_down.next_step_action not in [Tile.CellNextStep.IDLE, Tile.CellNextStep.GROW_TREE_BRANCHES]: return false
+	if !tile_down_right.is_empty() or tile_down_right.next_step_action not in [Tile.CellNextStep.IDLE, Tile.CellNextStep.GROW_TREE_BRANCHES]: return false
 	return true

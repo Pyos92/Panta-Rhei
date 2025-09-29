@@ -3,14 +3,22 @@ extends Node
 var debug_mode: bool
 
 enum GameState{
-	MANUAL=0, AUTOMATED=1
+	MANUAL, AUTOMATED, PREVIEW
 }
-var current_game_state : GameState = GameState.MANUAL
+var current_game_state : GameState = GameState.MANUAL:
+	get:
+		return current_game_state
+	set(value):
+		current_game_state = value
+		game_state_changed.emit()
 var grid_manager : GridManager
 var main : Main
 var ui : UI
 
+var _cumulative_delta : float = 0
+
 signal debug_mode_switched
+signal game_state_changed
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -18,7 +26,15 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
-	pass
+	match current_game_state:
+		GameState.MANUAL:
+			return
+		GameState.AUTOMATED:
+			_cumulative_delta += _delta
+			if _cumulative_delta > 1:
+				_cumulative_delta = 0
+				main.go_to_next_gen()
+
 	
 class Coords:
 	static func to_toroidal(input_coords: Vector2i) -> Vector2i:
