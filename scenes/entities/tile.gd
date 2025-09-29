@@ -28,45 +28,41 @@ var coords := Vector2i.ZERO:
 		position = Vector2i(coords.x * CELL_SIZE, coords.y * CELL_SIZE)
 var next_step_action := CellNextStep.IDLE
 var root_tile : Tile = null
+var branch_tiles : Array[Tile] = []
 
 func _ready() -> void:
-	clear_tile()
 	coords_label.text = str(int(coords.x)) + ", " + str(int(coords.y))
 	GameManager.debug_mode_switched.connect(func(): coords_label.visible = GameManager.debug_mode)
 	
 func clear_tile():
-	if type == CellType.TREE:
-		clear_tree()
-	else:
-		type = CellType.EMPTY
-		sprite.texture = load(SPRITE_EMPTY)
-		next_step_action = CellNextStep.IDLE
-	
-#Va chiamato sempre e solo sulla tile principale
-func clear_tree():
+	_update_global_count(type, CellType.EMPTY)
+	for branch_tile in branch_tiles:
+		branch_tile.clear_tile()
 	type = CellType.EMPTY
-	clear_tile()
-	var t2 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)
-	t2.type = CellType.EMPTY
-	t2.clear_tile()
-	var t3 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)
-	t3.type = CellType.EMPTY
-	t3.clear_tile()
-	var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
-	t4.type = CellType.EMPTY
-	t4.clear_tile()
+	root_tile = null
+	sub_type = 0
+	sprite.texture = load(SPRITE_EMPTY)
+	next_step_action = CellNextStep.IDLE
+	
 	
 func spawn_flower():
+	_update_global_count(type, CellType.FLOWER)
 	type = CellType.FLOWER
 	sprite.texture = load(SPRITE_FLOWER)
 	next_step_action = CellNextStep.IDLE
 
 func spawn_tree():
+	_update_global_count(type, CellType.TREE)
 	_spawn_tree(self, 1)
-	GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)._spawn_tree(self, 2)
-	GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)._spawn_tree(self, 3)
-	GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)._spawn_tree(self, 4)
-	next_step_action = CellNextStep.IDLE
+	var t2 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)
+	t2._spawn_tree(self, 2)
+	branch_tiles.append(t2)
+	var t3 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)
+	t3._spawn_tree(self, 3)
+	branch_tiles.append(t3)
+	var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
+	t4._spawn_tree(self, 4)
+	branch_tiles.append(t4)
 	
 func _spawn_tree(root_tile : Tile, _sub_type : int):
 	type = CellType.TREE
@@ -80,24 +76,19 @@ func _spawn_tree(root_tile : Tile, _sub_type : int):
 	next_step_action = CellNextStep.IDLE
 	
 func spawn_animal():
+	_update_global_count(type, CellType.ANIMAL)
 	type = CellType.ANIMAL
 	sprite.texture = load(SPRITE_ANIMAL)
 	next_step_action = CellNextStep.IDLE
 	
 func set_next_step_action(action : CellNextStep):
 	next_step_action = action
-	if type == CellType.TREE:
-		var t2 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.RIGHT)
-		var t3 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN)
-		var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
-		if next_step_action == CellNextStep.GROW_TREE: next_step_action = CellNextStep.GROW_TREE_BRANCHES
-		#Propaga le azioni di vita, morte e crescita
-		if next_step_action in [CellNextStep.IDLE,CellNextStep.LIVE,CellNextStep.GROW_TREE_BRANCHES,CellNextStep.DIE]:
-			t2.next_step_action = next_step_action
-			t3.next_step_action = next_step_action
-			t4.next_step_action = next_step_action
-				
-	
+	for branch_tile in branch_tiles:
+		if next_step_action in [CellNextStep.GROW_TREE]:
+			branch_tile.next_step_action = CellNextStep.GROW_TREE_BRANCHES
+		elif next_step_action in [CellNextStep.IDLE, CellNextStep.LIVE, CellNextStep.DIE]:
+			branch_tile.next_step_action = next_step_action
+		
 func is_empty() -> bool:
 	return type == CellType.EMPTY
 func has_flower() -> bool:
@@ -106,6 +97,12 @@ func has_tree() -> bool:
 	return type == CellType.TREE
 func has_animal() -> bool:
 	return type == CellType.ANIMAL
+	
+func _update_global_count(old_type : CellType, new_type : CellType) -> void:
+	var label_old : Label = GameManager.ui.get_label_of_type(old_type)
+	var label_new : Label = GameManager.ui.get_label_of_type(new_type)
+	if label_old != null: label_old.text = str(int(label_old.text) - 1)
+	if label_new != null: label_new.text = str(int(label_new.text) + 1)
 	
 func _to_string() -> String:
 	var str_type : String = CellType.keys()[type]

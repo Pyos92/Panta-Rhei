@@ -3,7 +3,7 @@ extends Node
 var debug_mode: bool
 
 enum GameState{
-	MANUAL, AUTOMATED
+	MANUAL=0, AUTOMATED=1
 }
 var current_game_state : GameState = GameState.MANUAL
 var grid_manager : GridManager

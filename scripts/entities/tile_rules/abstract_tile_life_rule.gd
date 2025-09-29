@@ -8,10 +8,14 @@ func evaluate_next_gen(tile_to_evaluate: Tile) -> void
 
 func apply_next_gen(tile_to_apply: Tile) -> void:
 	match tile_to_apply.next_step_action:
-		Tile.CellNextStep.DIE: tile_to_apply.clear_tile()
-		Tile.CellNextStep.GROW_FLOWER: tile_to_apply.spawn_flower()
-		Tile.CellNextStep.GROW_TREE: tile_to_apply.spawn_tree()
-		Tile.CellNextStep.GROW_ANIMAL: tile_to_apply.spawn_animal()
+		Tile.CellNextStep.DIE: 
+			tile_to_apply.clear_tile()
+		Tile.CellNextStep.GROW_FLOWER: 
+			tile_to_apply.spawn_flower()
+		Tile.CellNextStep.GROW_TREE: 
+			tile_to_apply.spawn_tree()
+		Tile.CellNextStep.GROW_ANIMAL: 
+			tile_to_apply.spawn_animal()
 
 func get_tiles_in_area(current_tile : Tile, area : Array[Vector2i], type_filter = null) -> Array[Tile]:
 	var tiles : Array[Tile] = []
