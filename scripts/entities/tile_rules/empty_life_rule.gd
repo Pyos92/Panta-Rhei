@@ -1,6 +1,8 @@
 extends AbstractTileLifeRule
 class_name EmptyLifeRule
 
+const OVERGROWTH_CONTROL := true
+
 func evaluate_next_gen(tile_to_evaluate: Tile) -> void:
 	if tile_to_evaluate.next_step_action != Tile.CellNextStep.IDLE: 
 		return
@@ -20,7 +22,7 @@ func evaluate_next_gen(tile_to_evaluate: Tile) -> void:
 	var tiles : Array[Tile] = get_tiles_in_area(tile_to_evaluate,AnimalLifeRule.ANIMAL_SEARCH_AREA, null)
 	var count = 0
 	for t in tiles: 
-		if t.next_step_action == Tile.CellNextStep.GROW_ANIMAL: 
+		if OVERGROWTH_CONTROL and t.next_step_action == Tile.CellNextStep.GROW_ANIMAL: 
 			count = -1
 			break
 		count += t.type

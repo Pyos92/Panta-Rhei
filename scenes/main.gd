@@ -50,10 +50,7 @@ func evaluate_next_gen(preview : bool = true) -> void:
 func go_to_next_gen() -> void:
 	evaluate_next_gen(false)
 		
-	_apply_next_gen_to_tiles(Tile.CellType.FLOWER)
-	_apply_next_gen_to_tiles(Tile.CellType.TREE)
-	_apply_next_gen_to_tiles(Tile.CellType.ANIMAL)
-	_apply_next_gen_to_tiles(Tile.CellType.EMPTY)
+	_apply_next_gen_to_tiles()
 		
 func _evaluate_tiles(type : Tile.CellType, preview : bool = false) -> void:
 	for y in range(0, GameManager.grid_manager.GRID_HEIGHT):
@@ -62,9 +59,9 @@ func _evaluate_tiles(type : Tile.CellType, preview : bool = false) -> void:
 			if tile.type == type:
 				LifecycleManager.evaluate_next_gen(tile, preview)
 		
-func _apply_next_gen_to_tiles(type : Tile.CellType) -> void:
+func _apply_next_gen_to_tiles(type_filter = null) -> void:
 	for y in range(0, GameManager.grid_manager.GRID_HEIGHT):
 		for x in range(0, GameManager.grid_manager.GRID_WIDTH):
 			var tile : Tile = GameManager.grid_manager.get_tile_at(Vector2i(x, y))
-			if tile.type == type:
+			if type_filter == null or tile.type == type_filter:
 				LifecycleManager.apply_next_gen(tile)
