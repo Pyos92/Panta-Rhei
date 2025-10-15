@@ -1,9 +1,9 @@
 extends Control
 class_name SpawnMenu
 
-@onready var spawn_flower: Button = $VBoxContainer/SpawnFlower
-@onready var spawn_tree: Button = $VBoxContainer/SpawnTree
-@onready var spawn_animal: Button = $VBoxContainer/SpawnAnimal
+@onready var spawn_flower: TextureButton = %SpawnFlower
+@onready var spawn_tree: TextureButton = %SpawnTree
+@onready var spawn_animal: TextureButton = %SpawnAnimal
 
 var cell : Tile
 

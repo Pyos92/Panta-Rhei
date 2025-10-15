@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdemkgexqodqu"
-path="res://.godot/imported/tree2.png-537c0b338cf4b415e683a90b06c66fc3.ctex"
+uid="uid://bftwjhws63xvn"
+path="res://.godot/imported/fiori.png-ff55329d7270e91145ab25e6c37a4e76.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprite/tree2.png"
-dest_files=["res://.godot/imported/tree2.png-537c0b338cf4b415e683a90b06c66fc3.ctex"]
+source_file="res://assets/sprite/tiles/fiori.png"
+dest_files=["res://.godot/imported/fiori.png-ff55329d7270e91145ab25e6c37a4e76.ctex"]
 
 [params]
 

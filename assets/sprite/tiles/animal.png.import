@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://doqamft5ysfi"
-path="res://.godot/imported/animal.png-8cb7618508cb74e6286e3ef5ba47967d.ctex"
+path="res://.godot/imported/animal.png-7085edaca0ec0fdd8345087dc3ef1775.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprite/animal.png"
-dest_files=["res://.godot/imported/animal.png-8cb7618508cb74e6286e3ef5ba47967d.ctex"]
+source_file="res://assets/sprite/tiles/animal.png"
+dest_files=["res://.godot/imported/animal.png-7085edaca0ec0fdd8345087dc3ef1775.ctex"]
 
 [params]
 

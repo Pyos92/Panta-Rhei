@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bftwjhws63xvn"
-path="res://.godot/imported/fiori.png-2eba14c0b7230876eaee9477273aa436.ctex"
+uid="uid://bywq0v8nt51ga"
+path="res://.godot/imported/spawn_fiori.png-f0b2e50afc531919ad43e45580148dc0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprite/fiori.png"
-dest_files=["res://.godot/imported/fiori.png-2eba14c0b7230876eaee9477273aa436.ctex"]
+source_file="res://assets/sprite/buttons/spawn_fiori.png"
+dest_files=["res://.godot/imported/spawn_fiori.png-f0b2e50afc531919ad43e45580148dc0.ctex"]
 
 [params]
 
