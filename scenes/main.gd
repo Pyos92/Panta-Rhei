@@ -49,7 +49,7 @@ func evaluate_next_gen(preview : bool = true) -> void:
 		
 func go_to_next_gen() -> void:
 	evaluate_next_gen(false)
-		
+	GameManager.ui.increase_generation_number()
 	_apply_next_gen_to_tiles()
 		
 func _evaluate_tiles(type : Tile.CellType, preview : bool = false) -> void:

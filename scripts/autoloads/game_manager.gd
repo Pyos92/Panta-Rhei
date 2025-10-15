@@ -1,6 +1,7 @@
 extends Node
 
 var debug_mode: bool
+var dev_mode := false
 
 enum GameState{
 	MANUAL, AUTOMATED, PREVIEW

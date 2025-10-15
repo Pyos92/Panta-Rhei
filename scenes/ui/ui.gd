@@ -6,6 +6,7 @@ class_name UI
 @onready var num_fiori: Label = %NumFiori
 @onready var num_alberi: Label = %NumAlberi
 @onready var num_animali: Label = %NumAnimali
+@onready var num_generazione: Label = %NumGenerazione
 #Pulsanti
 @onready var step_button: Button = %Step
 @onready var auto_play: Button = %AutoPlay
@@ -24,6 +25,8 @@ func _ready() -> void:
 	step_button.button_up.connect(step_button_action)
 	auto_play.button_up.connect(autoplay_button_action)
 	preview.button_up.connect(preview_button_action)
+	
+	preview.visible = GameManager.dev_mode
 
 	GameManager.game_state_changed.connect(game_mode_changed)
 
@@ -37,6 +40,9 @@ func get_label_of_type(type : Tile.CellType) -> Label:
 		Tile.CellType.TREE: return num_alberi
 		Tile.CellType.ANIMAL: return num_animali
 	return null
+	
+func increase_generation_number() -> void:
+	num_generazione.text = str(int(num_generazione.text) + 1)
 	
 #region "Actions"
 func step_button_action() -> void:
