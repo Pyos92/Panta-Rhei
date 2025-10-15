@@ -28,11 +28,20 @@ var coords := Vector2i.ZERO:
 var next_step_action := CellNextStep.IDLE
 var root_tile : Tile = null
 var branch_tiles : Array[Tile] = []
+var selected := false:
+	get: return selected
+	set(value): 
+		selected = value; 
+		queue_redraw()
 
 func _ready() -> void:
 	coords_label.text = str(int(coords.x)) + ", " + str(int(coords.y))
 	GameManager.debug_mode_switched.connect(func(): coords_label.visible = GameManager.debug_mode)
 	
+func _draw() -> void:
+	if selected:
+		draw_rect(Rect2(Vector2(-CELL_SIZE/2, -CELL_SIZE/2), Vector2(CELL_SIZE, CELL_SIZE)), Color.BLACK, false, 1)
+
 func clear_tile():
 	if root_tile == null:
 		_update_global_count(type, CellType.EMPTY)
@@ -43,13 +52,14 @@ func clear_tile():
 	sub_type = 0
 	sprite.texture = load(SPRITE_EMPTY)
 	next_step_action = CellNextStep.IDLE
-	
+	selected = false
 	
 func spawn_flower():
 	_update_global_count(type, CellType.FLOWER)
 	type = CellType.FLOWER
 	sprite.texture = load(SPRITE_FLOWER)
 	next_step_action = CellNextStep.IDLE
+	selected = false
 
 func spawn_tree():
 	_update_global_count(type, CellType.TREE)
@@ -63,6 +73,7 @@ func spawn_tree():
 	var t4 : Tile = GameManager.grid_manager.get_tile_at(coords, Vector2i.DOWN+Vector2i.RIGHT)
 	t4._spawn_tree(self, 4)
 	branch_tiles.append(t4)
+	selected = false
 	
 func _spawn_tree(root_tile : Tile, _sub_type : int):
 	type = CellType.TREE
@@ -79,6 +90,7 @@ func spawn_animal():
 	type = CellType.ANIMAL
 	sprite.texture = load(SPRITE_ANIMAL)
 	next_step_action = CellNextStep.IDLE
+	selected = false
 	
 func set_next_step_action(action : CellNextStep):
 	next_step_action = action

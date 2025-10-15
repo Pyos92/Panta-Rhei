@@ -16,17 +16,17 @@ script = ExtResource("1_g1y7k")
 
 [node name="Control" type="Control" parent="."]
 anchors_preset = 0
-offset_left = -49.0
-offset_top = -34.0
-offset_right = -9.0
-offset_bottom = 6.0
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 48.0
+offset_bottom = -14.0
 
 [node name="SpawnFlower" type="TextureButton" parent="Control"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_top = 3.0
+offset_top = 18.0
 offset_right = 32.0
-offset_bottom = 35.0
+offset_bottom = 50.0
 texture_normal = ExtResource("2_rxgyp")
 
 [node name="SpawnTree" type="TextureButton" parent="Control"]
@@ -42,7 +42,7 @@ texture_normal = ExtResource("3_gmfmb")
 unique_name_in_owner = true
 layout_mode = 0
 offset_left = 68.0
-offset_top = 3.0
+offset_top = 18.0
 offset_right = 100.0
-offset_bottom = 35.0
+offset_bottom = 50.0
 texture_normal = ExtResource("4_xcudt")

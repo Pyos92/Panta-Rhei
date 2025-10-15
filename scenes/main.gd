@@ -1,6 +1,8 @@
 extends Node2D
 class_name Main
 
+var last_selected_cell : Tile = null
+
 func _ready() -> void:
 	GameManager.main = self
 	GameManager.debug_mode_switched.connect(func(): GameManager.ui.debug_panel.visible = GameManager.debug_mode)
@@ -20,6 +22,8 @@ func _input(event: InputEvent) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.is_released():
+		if GameManager.last_selected_tile != null: 
+			GameManager.last_selected_tile.selected = false
 		var spawn_menu = GameManager.ui.spawn_menu
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			var cell : Tile = raycast(event.position)
@@ -27,6 +31,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				spawn_menu.set_cell(cell)
 				spawn_menu.position = cell.global_position
 				spawn_menu.visible = true
+				cell.selected = true
+				GameManager.last_selected_tile = cell
 		elif event.button_index == MOUSE_BUTTON_RIGHT:
 			spawn_menu.visible = false
 			

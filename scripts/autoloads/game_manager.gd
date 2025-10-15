@@ -18,6 +18,8 @@ var ui : UI
 
 var _cumulative_delta : float = 0
 
+var last_selected_tile : Tile = null
+
 signal debug_mode_switched
 signal game_state_changed
 
